@@ -1,0 +1,15 @@
+winlogbeat:
+  registry_file: "{{ workdir }}/output/.winlogbeat.yml"
+  event_logs:
+    - name: Application
+      ignore_older: 72h
+    - name: Security
+    - name: System
+output:
+  file:
+    path: "{{ workdir }}/output"
+logging:
+  to_files: true
+  files:
+    path: "{{ workdir }}/output/logs"
+  level: info

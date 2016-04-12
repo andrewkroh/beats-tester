@@ -22,3 +22,7 @@
 - name: Check file (darwin)
   shell: chdir={{workdir}} shasum -c {{beat_pkg}}.sha1.txt
   when: ansible_os_family == "Darwin"
+
+- name: Check file (windows)
+  script: compare_hash.ps1 -file "{{ workdir }}\\{{ beat_pkg }}" -hashFile "{{ workdir }}\\{{ beat_pkg }}.sha1.txt"
+  when: ansible_os_family == "Windows"

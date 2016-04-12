@@ -1,0 +1,14 @@
+filebeat:
+  registry_file: '{{ workdir }}\\output\\.filebeat'
+  prospectors:
+    - paths:
+       - c:\logs\*.log
+      type: log
+output:
+  file:
+    path: '{{ workdir }}\\output'
+logging:
+  to_files: true
+  files:
+    path: '{{ workdir }}\\output\\logs'
+  level: debug
