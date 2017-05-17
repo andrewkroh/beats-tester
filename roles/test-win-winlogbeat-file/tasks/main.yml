@@ -1,26 +1,35 @@
 - name: Ensure no previous ProgramData dir exists
-  win_file: path={{ winlogbeat_data_dir }} state=absent
+  win_file:
+    path: "{{ winlogbeat_data_dir }}"
+    state: "absent"
 
-- name: Install Winlogbeat service
-  script: run_script.ps1 -script {{ installdir }}\\install-service-{{ beat_name }}.ps1
+- name: Install {{ beat_name | capitalize }} service
+  win_shell: "{{ installdir }}\\install-service-{{ beat_name }}.ps1"
 
 - name: Replace configuration file with template (windows)
-  win_template: src={{beat_name}}.yml dest={{installdir}}
+  win_template:
+    src:  "{{ beat_name }}.yml"
+    dest: "{{ installdir }}\\{{ beat_name }}.yml"
 
-- name: Start Winlogbeat
-  win_service: name={{ beat_name }} state=started
+- name: Start {{ beat_name | capitalize }} service
+  win_service:
+    name:  "{{ beat_name }}"
+    state: started
 
 - name: Sleep a little
-  script: sleep.ps1 -duration 10
+  win_shell: Start-Sleep -s 10
 
-- name: Stop Winlogbeat
-  win_service: name={{ beat_name }} state=stopped
+- name: Stop {{ beat_name | capitalize }} service
+  win_service:
+    name:  "{{ beat_name }}"
+    state: stopped
 
-- name: Uninstall service
-  script: run_script.ps1 -script {{ installdir }}\\uninstall-service-{{ beat_name }}.ps1
+- name: Uninstall {{ beat_name | capitalize }} service
+  win_shell: "{{ installdir }}\\uninstall-service-{{ beat_name }}.ps1"
 
 - name: Stat output file
-  win_stat: path={{ winlogbeat_data_dir }}\output\{{ beat_name }}
+  win_stat:
+    path: "{{ winlogbeat_data_dir }}\\output\\{{ beat_name }}"
   register: output_stat
 
 - debug: var=output_stat
@@ -32,7 +41,7 @@
       - "output_stat.stat.size > 0"
 
 - name: Verify output contents
-  script: run_script.ps1 -script "'cat -Encoding UTF8 {{ winlogbeat_data_dir }}\output\{{ beat_name }} | select -First 1'"
+  win_shell: "cat -Encoding UTF8 {{ winlogbeat_data_dir }}\\output\\{{ beat_name }} | select -First 1"
   register: json_output
 
 - set_fact: event="{{ json_output.stdout | from_json }}"
@@ -75,7 +84,7 @@
       - "registry_stat.stat.size > 0"
 
 - name: Verify registry contents
-  script: run_script.ps1 -script "'cat {{ winlogbeat_data_dir }}\\.winlogbeat.yml'"
+  win_shell: "cat {{ winlogbeat_data_dir }}\\.winlogbeat.yml"
   register: registry_output
 
 - set_fact: registry="{{ registry_output.stdout | from_yaml }}"

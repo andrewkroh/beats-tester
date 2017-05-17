@@ -4,7 +4,10 @@
   when: not ansible_os_family == "Windows"
 
 - name: Download package sha1 (windows)
-  win_get_url: url={{beat_url}}.sha1 dest={{workdir}}/{{beat_pkg}}.sha1 validate_certs=no
+  win_get_url:
+    url:  '{{beat_url}}.sha1'
+    dest: '{{workdir}}\{{beat_pkg}}.sha1'
+    validate_certs: no
   when: ansible_os_family == "Windows"
 
 - name: Download package
@@ -12,7 +15,11 @@
   when: not ansible_os_family == "Windows"
 
 - name: Download package (windows)
-  win_get_url: url={{beat_url}} dest={{workdir}}/{{beat_pkg}} validate_certs=no force=no
+  win_get_url:
+    url: '{{ beat_url }}'
+    dest: '{{ workdir }}\{{ beat_pkg }}'
+    validate_certs: no
+    force: no
   when: ansible_os_family == "Windows"
 
 - name: Check file (linux)

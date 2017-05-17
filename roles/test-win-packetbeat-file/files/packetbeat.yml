@@ -1,5 +1,5 @@
 packetbeat.interfaces:
-  device: 0
+  device: 1
 
 packetbeat.protocols:
   http:
@@ -7,4 +7,4 @@ packetbeat.protocols:
 
 output:
   file:
-    path: "c:/users/vagrant/output"
+    path: 'c:/users/vagrant/output'

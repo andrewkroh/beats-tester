@@ -5,5 +5,5 @@ heartbeat.monitors:
 
 output:
   file:
-    path: "c:/users/vagrant/output"
+    path: 'c:/users/vagrant/output'
     filename: heartbeat

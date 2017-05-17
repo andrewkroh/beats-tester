@@ -14,4 +14,5 @@ tester-centos7-64
 localhost
 
 [windows]
-tester-win12-64 ansible_ssh_host=localhost ansible_ssh_user=administrator ansible_ssh_port=5985 ansible_connection=winrm ansible_ssh_pass=vagrant
+tester-win2012-64 ansible_ssh_host=192.168.33.75 ansible_ssh_user=administrator ansible_ssh_port=5985 ansible_connection=winrm ansible_ssh_pass=vagrant
+tester-win2016-64 ansible_ssh_host=192.168.33.76 ansible_ssh_user=administrator ansible_ssh_port=5985 ansible_connection=winrm ansible_ssh_pass=vagrant

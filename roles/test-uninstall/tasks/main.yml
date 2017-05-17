@@ -21,5 +21,7 @@
   when: ansible_os_family == "Darwin"
 
 - name: Delete directory (windows)
-  win_file: path={{installdir}} state=absent
+  win_file:
+    path:  "{{ installdir }}"
+    state: absent
   when: ansible_os_family == "Windows"

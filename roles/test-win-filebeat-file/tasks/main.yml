@@ -1,32 +1,50 @@
 - name: Ensure empty output directory
-  win_file: path={{workdir}}\\output state=absent
+  win_file:
+    path: "{{workdir}}\\output"
+    state: absent
 
 - name: Ensure no previous .filebeat file exists
-  win_file: path=c:\windows\syswow64\.filebeat state=absent
+  win_file:
+    path:  'c:\windows\syswow64\.filebeat'
+    state: absent
 
 - name: Replace configuration file (windows)
-  win_copy: src={{beat_name}}.yml dest={{installdir}}
+  win_copy:
+    src:  "{{beat_name}}.yml"
+    dest: "{{installdir}}\\{{beat_name}}.yml"
 
-- name: Install Filebeat service
-  script: run_script.ps1 -script {{installdir}}\\install-service-{{beat_name}}.ps1
-
-- name: Delete logs directory
-  win_file: path=c:\logs state=absent
+- name: Install {{ beat_name | capitalize }} service
+  win_shell: '{{ installdir }}\install-service-{{ beat_name }}.ps1'
 
 - name: Start filebeat
-  win_service: name={{beat_name}} state=started
+  win_service:
+    name:  "{{beat_name}}"
+    state: started
 
 - name: Create logs directory
-  win_file: path=c:\logs state=directory
+  win_file:
+    path:  'c:\logs'
+    state: directory
 
 - name: Create log file
-  script: echo.ps1 -line "Logline" -file c:\\logs\\test.log
+  win_shell: Write-Output "Hello Filebeat!" | Out-file "c:\\logs\\test.log" -encoding UTF8
+  args:
+    creates: "c:\\logs\\test.log"
 
 - name: Sleep a little
-  script: sleep.ps1 -duration 10
+  win_shell: Start-Sleep -s 10
+
+- name: Stop filebeat
+  win_service:
+    name:  "{{beat_name}}"
+    state: stopped
+
+- name: Uninstall service
+  win_shell: "{{ installdir }}\\uninstall-service-{{ beat_name }}.ps1"
 
 - name: Stat output file
-  win_stat: path={{workdir}}\output\{{beat_name}}
+  win_stat:
+    path: "{{workdir}}\\output\\{{beat_name}}"
   register: output_stat
 
 - debug: var=output_stat
@@ -35,10 +53,4 @@
   assert:
     that:
       - "output_stat.stat.exists"
-      - "output_stat.stat.size > 250"
-
-- name: Stop filebeat
-  win_service: name={{beat_name}} state=stopped
-
-- name: Uninstall service
-  script: run_script.ps1 -script {{installdir}}\\uninstall-service-{{beat_name}}.ps1
+      - "output_stat.stat.size > 100"
